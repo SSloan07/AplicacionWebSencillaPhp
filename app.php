@@ -18,7 +18,7 @@ $contraseña = $variablesDeEntorno['CLAVE'];
 
 
 # Conexión base de datos 
-$mysqli = new mysqli("localhost", $usuario, $contraseña, $baseDeDatos);
+$conexion = new mysqli("localhost", $usuario, $contraseña, $baseDeDatos);
 
 
 # Clase Usuario 
@@ -54,7 +54,8 @@ class Usuario {
         return $this->apellidos; 
     }
 
-    function insertarUsuario ($mysqli){
+
+    function insertarUsuario ($conexion, $tabla){
         $nombre = strtolower($this->nombre);
         $apellidos = strtolower($this->apellidos);
 
@@ -64,7 +65,7 @@ class Usuario {
         
 
         $query = "
-            INSERT INTO usuario (cedula, nombre, apellidos, fechaDeNacimiento)
+            INSERT INTO $tabla (cedula, nombre, apellidos, fechaDeNacimiento)
             VALUES (
                 {$this->cedula},
                 '{$this->nombre}',
@@ -74,9 +75,9 @@ class Usuario {
         ;
 
 
-        $ejecucion = mysqli_query($mysqli,$query);
+        $ejecucion = mysqli_query($conexion,$query);
         if (!$ejecucion) {
-            die("Error SQL: " . mysqli_error($mysqli));
+            die("Error SQL: " . mysqli_error($conexion));
         }
 
     }
@@ -95,5 +96,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
     $usuario = new Usuario($cedula, $nombre, $apellidos, $fechaDeNacimiento); 
 
-    $usuario->insertarUsuario($mysqli);    
+    $usuario->insertarUsuario($conexion, $tabla);    
 };
+
+# Para traer todos los clientes
+if ($_SERVER["REQUEST_METHOD"] == "GET"){
+    $query = "SELECT * FROM $tabla";
+    $resultado  = mysqli_query($conexion, $query);
+    if (!$resultado) {
+        die("Error SQL: " . mysqli_error($conexion));
+    }
+};
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inserción</title>
+</head>
+<body>
+    <h1>Todo salió bien!!</h1>
+    <a href="index.php">
+        <button>Volver</button>
+    </a>
+</body>
+</html>
+
+
