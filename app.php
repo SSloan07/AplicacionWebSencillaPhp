@@ -1,29 +1,40 @@
 <?php 
 
+# Para el debug 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$variablesDeEntorno = parse_ini_file(".env");
+
 # Datos para hacer la conexión con la base de datos
-$baseDeDatos = getenv('BASEDEDATOS');
-$tabla = getenv('TABLA');
-$usuario = getenv('USUARIO');
-$contraseña = getenv('CLAVE');
+$baseDeDatos = $variablesDeEntorno['BASEDEDATOS'];
+$tabla = $variablesDeEntorno['TABLA'];
+$usuario = $variablesDeEntorno['USUARIO'];
+$contraseña = $variablesDeEntorno['CLAVE'];
+
+
+
+
 
 # Conexión base de datos 
 $mysqli = new mysqli("localhost", $usuario, $contraseña, $baseDeDatos);
 
-if (!$mysqli) {
-    die("Error de conexión: " . mysqli_connect_error());
-}
-
 
 # Clase Usuario 
 class Usuario {
+
     public $cedula = 0; 
     public $nombre = ""; 
     public $apellidos = ""; 
-    public $fechaDeNacimiento = '1918-11-11'; 
-    public function __construct($cedula,$nombre,$apellidos){
+    public $fechaDeNacimiento = null; 
+
+
+    public function __construct($cedula,$nombre,$apellidos, $fechaDeNacimiento){
         $this->cedula = $cedula;
         $this->nombre = $nombre; 
         $this->apellidos = $apellidos;
+        $this->fechaDeNacimiento = $fechaDeNacimiento ?? '1918-11-11';
     }
     # Nombre
 
@@ -42,29 +53,47 @@ class Usuario {
     public function getApellidos (){
         return $this->apellidos; 
     }
+
+    function insertarUsuario ($mysqli){
+        $nombre = strtolower($this->nombre);
+        $apellidos = strtolower($this->apellidos);
+
+        $this->setNombre($nombre);
+        $this->setApellidos($apellidos);
+
+        
+
+        $query = "
+            INSERT INTO usuario (cedula, nombre, apellidos, fechaDeNacimiento)
+            VALUES (
+                {$this->cedula},
+                '{$this->nombre}',
+                '{$this->apellidos}',
+                '{$this->fechaDeNacimiento}'
+            )"
+        ;
+
+
+        $ejecucion = mysqli_query($mysqli,$query);
+        if (!$ejecucion) {
+            die("Error SQL: " . mysqli_error($mysqli));
+        }
+
+    }
 }
 
 
-function insertarUsuario ($usuario){
-    $nombre = strtolower($usuario->nombre);
-    $apellidos = strtolower($usuario->apellidos);
 
-    $usuario->setNombre($nombre);
-    $usuario->setApellidos($apellidos);
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+    $cedula = htmlspecialchars($_POST['cedula']); 
 
-    $query = "
-        INSERT INTO usuario (cedula, nombre, apellidos, fechaDeNacimiento)
-        VALUES (
-            {$usuario->cedula},
-            '{$usuario->nombre}',
-            '{$usuario->apellidos}',
-            '{$usuario->fechaDeNacimiento}'
-        )
-    ";
+    $nombre = htmlspecialchars($_POST['nombre']); 
 
-    $ejecucion = mysqli_query($mysqli,$query);
+    $apellidos = htmlspecialchars($_POST['apellidos']);
 
-    if (!mysqli_query($mysqli, $query)) {
-        die("Error SQL: " . mysqli_error($mysqli));
-    }
+    $fechaDeNacimiento = htmlspecialchars($_POST['fechaDeNacimiento']);
+
+    $usuario = new Usuario($cedula, $nombre, $apellidos, $fechaDeNacimiento); 
+
+    $usuario->insertarUsuario($mysqli);    
 };
