@@ -1,0 +1,5 @@
+\contentsline {section}{\numberline {1}Introducción}{3}{}%
+\contentsline {section}{\numberline {2}Retos}{3}{}%
+\contentsline {subsection}{\numberline {2.1}Entender la sintaxis basica de PHP}{3}{}%
+\contentsline {subsection}{\numberline {2.2}Investigar como hacer una conexión a Mysql desde PHP}{3}{}%
+\contentsline {subsection}{\numberline {2.3}Metodos de petición HTTP}{3}{}%
