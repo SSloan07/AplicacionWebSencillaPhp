@@ -24,10 +24,10 @@ $conexion = new mysqli("localhost", $usuario, $contraseña, $baseDeDatos);
 # Clase Usuario 
 class Usuario {
 
-    public $cedula = 0; 
-    public $nombre = ""; 
-    public $apellidos = ""; 
-    public $fechaDeNacimiento = null; 
+    private $cedula = 0; 
+    private $nombre = ""; 
+    private $apellidos = ""; 
+    private $fechaDeNacimiento = null; 
 
 
     public function __construct($cedula,$nombre,$apellidos, $fechaDeNacimiento){
@@ -109,18 +109,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET"){
 };
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Inserción</title>
-</head>
-<body>
-    <h1>Todo salió bien!!</h1>
-    <a href="index.php">
-        <button>Volver</button>
-    </a>
-</body>
-</html>
+
 
 

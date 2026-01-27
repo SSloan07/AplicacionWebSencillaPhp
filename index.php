@@ -8,7 +8,7 @@
         <h1>Hola de nuevo estimado cliente</h1>
         <div>
             <h3>Ingrese sus datos:</h3>
-            <form action="../app.php" method="POST">
+            <form action="app.php" method="POST">
 
                 <input type="number" name="cedula" placeholder="Cedula" required></br>
 
